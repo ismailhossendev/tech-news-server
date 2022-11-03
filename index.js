@@ -20,15 +20,19 @@ const run=async()=>{
         const allNews = client.db("techNews").collection("news");
 
         app.get('/news',async(req,res)=>{
+            const page = parseInt(req.query.page);
+            const size = parseInt(req.query.size);
+
             const cursor = allNews.find({});
-            const news = await cursor.toArray();
-            res.send(news)
+            const count = await cursor.count();
+            const news = await cursor.skip(page * size).limit(size).toArray();
+            res.send({news,count})
         });
         app.delete('/news',async(req,res)=>{
             const id = req.query.id;
             const filter = {_id:ObjectID(id)}
             const result = await allNews.deleteOne(filter);
-            if(result.deletedCount){
+            if(result.deletedCount > 0){
                 res.send({
                     success:true,
                     message:"Successfully Deleted"
@@ -51,16 +55,10 @@ const run=async()=>{
                 }
             };
             const result = await allNews.updateOne(filter,updatedDoc);
-            if(result.matchedCount){
-                res.send({
-                    success:true,
-                    message:'Successfully Updated'
-                });
-            }else{
-                res.send({
-                    success:false,
-                    message:'not updated please try again'
-                })
+            // res.send(result.matchedCount)
+            if(result.modifiedCount){
+                res.send('server ok')
+                console.log(result);
             }
         });
 
