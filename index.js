@@ -44,8 +44,7 @@ const run=async()=>{
         app.patch('/post/edit',async(req,res)=>{
             const id = req.query.id;
             const {title,media,summary} = req.body;
-            const filter = {_id:ObjectID(id)};
-            
+            const filter = {_id: ObjectID(id)};
             const updatedDoc = {
                 $set:{
                     title,media,summary
