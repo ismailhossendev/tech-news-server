@@ -39,6 +39,37 @@ const run=async()=>{
                     message:'Please try again'
                 })
             }
+        });
+
+        app.patch('/post/edit',async(req,res)=>{
+            const id = req.query.id;
+            const {title,media,summary} = req.body;
+            const filter = {_id:ObjectID(id)};
+            
+            const updatedDoc = {
+                $set:{
+                    title,media,summary
+                }
+            };
+            const result = await allNews.updateOne(filter,updatedDoc);
+            if(result.matchedCount){
+                res.send({
+                    success:true,
+                    message:'Successfully Updated'
+                });
+            }else{
+                res.send({
+                    success:false,
+                    message:'not updated please try again'
+                })
+            }
+        });
+
+        app.get('/post/:id',async(req,res)=>{
+            const id = req.params.id;
+            const filter = {_id:ObjectID(id)};
+            const result = await allNews.findOne(filter);
+            res.send(result);
         })
 
     }
